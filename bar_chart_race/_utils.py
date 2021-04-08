@@ -4,7 +4,7 @@ import pandas as pd
 from matplotlib import image as mimage
 
 
-def load_dataset(name='covid19', threshold=0):
+def load_dataset(name='covid19'):
     '''
     Return a pandas DataFrame suitable for immediate use in `bar_chart_race`.
     Must be connected to the internet
@@ -18,8 +18,6 @@ def load_dataset(name='covid19', threshold=0):
         * 'covid19_tutorial'
         * 'urban_pop'
         * 'baseball'
-    threshold : int, default 0
-        Lowest value that will be shown on the bar_chart_race
 
     Returns
     -------
@@ -34,16 +32,15 @@ def load_dataset(name='covid19', threshold=0):
     index_col = index_dict[name]
     parse_dates = [index_col] if index_col else None
     df = pd.read_csv(url, index_col=index_col, parse_dates=parse_dates)
-    new_df = filter_threshold(df, threshold)
-
-    return new_df
-
-
-def filter_threshold(df, thresh):
-    return df.loc[(df.hr > thresh)]
+    df.fillna(0, inplace=True)
+    return df
 
 
-def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate_period=False,
+def filter_threshold(df, threshold):
+    return df[df.iloc[:, -1:] > threshold]
+
+
+def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0, interpolate_period=False,
                       steps_per_period=10, compute_ranks=True):
     '''
     Prepares 'wide' data for bar chart animation. 
@@ -75,6 +72,9 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate
         By default, use all bars. New bars entering the race will 
         appear from the bottom or top.
 
+    threshold : int, default 0
+        Choose the minimum value to display on the graph
+
     interpolate_period : bool, default `False`
         Whether to interpolate the period. Only valid for datetime or
         numeric indexes. When set to `True`, for example, 
@@ -103,6 +103,7 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate
     --------
     df_values, df_ranks = bcr.prepare_wide_data(df)
     '''
+
     if n_bars is None:
         n_bars = df.shape[1]
 
@@ -128,8 +129,11 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate
         df_ranks = df_ranks.interpolate()
 
     df_values = df_values.interpolate()
+
     if compute_ranks:
         return df_values, df_ranks
+
+    df_values = filter_threshold(df_values, threshold)
     return df_values
 
 

@@ -13,7 +13,7 @@ class _BCR:
     def __init__(self, df):
         self._df = df
 
-    def bar_chart_race(self, filename=None, orientation='h', sort='desc', n_bars=None, 
+    def bar_chart_race(self, filename=None, orientation='h', sort='desc', n_bars=None, thresh=0,
                    fixed_order=False, fixed_max=False, steps_per_period=10, 
                    period_length=500, end_period_pause=0, interpolate_period=False, 
                    period_label=True, period_template=None, period_summary_func=None,
@@ -23,7 +23,7 @@ class _BCR:
                    shared_fontdict=None, scale='linear', fig=None, writer=None, 
                    bar_kwargs=None,  fig_kwargs=None, filter_column_colors=False):
 
-        return bcr(self._df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
+        return bcr(self._df, filename, orientation, sort, n_bars, thresh, fixed_order, fixed_max,
                         steps_per_period, period_length, end_period_pause, interpolate_period, 
                         period_label, period_template, period_summary_func, perpendicular_bar_func,
                         colors, title, bar_size, bar_textposition, bar_texttemplate, 
@@ -44,10 +44,10 @@ class _BCR:
                     title, line_label_font, tick_label_font, tick_template, shared_fontdict, 
                     scale, fig, writer, line_kwargs, fig_kwargs)
 
-    def prepare_wide_data(self, orientation='h', sort='desc', n_bars=None, interpolate_period=False, 
+    def prepare_wide_data(self, orientation='h', sort='desc', n_bars=None, threshold=0, interpolate_period=False,
                           steps_per_period=10, compute_ranks=True):
-        return pwd(self._df, orientation, sort, n_bars, interpolate_period,
-                                 steps_per_period, compute_ranks)
+        return pwd(self._df, orientation, sort, n_bars, threshold, interpolate_period,
+                   steps_per_period, compute_ranks)
 
     def prepare_long_data(self, index, columns, values, aggfunc='sum', orientation='h', 
                           sort='desc', n_bars=None, interpolate_period=False, 
