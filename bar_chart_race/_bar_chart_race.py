@@ -560,6 +560,9 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
         By default, use all bars. New bars entering the race will appear 
         from the edge of the axes.
 
+    threshold : int, default 0
+        Choose the minimum value to be displayed on the graph
+
     fixed_order : bool or list, default False
         When `False`, bar order changes every time period to correspond 
         with `sort`. When `True`, bars remained fixed according to their 
