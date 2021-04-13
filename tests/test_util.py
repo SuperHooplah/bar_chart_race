@@ -7,11 +7,6 @@ df = df.iloc[-20:-16]
 
 
 def test_threshold():
-    filtered_df = utils.filter_threshold(df, 60)
-    assert len(filtered_df) == 1
+    filt_df = utils.filter_threshold(df, 25)
 
-    filtered_df = utils.filter_threshold(df, 0)
-    assert len(filtered_df) == 4
-
-    filtered_df = utils.filter_threshold(df, 50)
-    assert filtered_df.iloc[0]['hr'] > 50
+    assert filt_df[filt_df.iloc[:, -1]] > 25

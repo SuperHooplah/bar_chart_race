@@ -10,7 +10,7 @@ from ._utils import prepare_wide_data
 
 class _BarChartRace:
     
-    def __init__(self, df, filename, orientation, sort, n_bars, threshold, fixed_order, fixed_max,
+    def __init__(self, df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
                  steps_per_period, period_length, end_period_pause, interpolate_period, 
                  period_label, period_template, period_summary_func, perpendicular_bar_func, 
                  colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font, 
@@ -21,7 +21,6 @@ class _BarChartRace:
         self.orientation = orientation
         self.sort = sort
         self.n_bars = n_bars or df.shape[1]
-        self.threshold = threshold
         self.fixed_order = fixed_order
         self.fixed_max = fixed_max
         self.steps_per_period = steps_per_period
@@ -164,7 +163,7 @@ class _BarChartRace:
             
         compute_ranks = self.fixed_order is False
         dfs = prepare_wide_data(df, orientation=self.orientation, sort=self.sort,
-                                n_bars=self.n_bars, threshold=self.threshold, interpolate_period=self.interpolate_period,
+                                n_bars=self.n_bars, interpolate_period=self.interpolate_period,
                                 steps_per_period=self.steps_per_period, compute_ranks=compute_ranks)
         if isinstance(dfs, tuple):
             df_values, df_ranks = dfs
