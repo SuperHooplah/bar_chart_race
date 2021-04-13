@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 from matplotlib import image as mimage
 
 
@@ -18,6 +19,8 @@ def load_dataset(name='covid19'):
         * 'covid19_tutorial'
         * 'urban_pop'
         * 'baseball'
+    threshold : int, default 0
+        Lowest value that will be shown on the bar_chart_race
 
     Returns
     -------
@@ -32,12 +35,12 @@ def load_dataset(name='covid19'):
     index_col = index_dict[name]
     parse_dates = [index_col] if index_col else None
     df = pd.read_csv(url, index_col=index_col, parse_dates=parse_dates)
-    df.fillna(0, inplace=True)
+
     return df
 
 
-def filter_threshold(df, threshold):
-    return df[df.iloc[:, -1:] > threshold]
+def filter_threshold(df, thresh):
+    return df[df.iloc[:, -1:] > thresh]
 
 
 def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0, interpolate_period=False,
@@ -72,8 +75,8 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0
         By default, use all bars. New bars entering the race will 
         appear from the bottom or top.
 
-    threshold : int, default 0
-        Choose the minimum value to display on the graph
+    threshold : int, deafult None
+        Choose minimum value to be displayed on the graph.
 
     interpolate_period : bool, default `False`
         Whether to interpolate the period. Only valid for datetime or
@@ -103,14 +106,18 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0
     --------
     df_values, df_ranks = bcr.prepare_wide_data(df)
     '''
-
     if n_bars is None:
         n_bars = df.shape[1]
 
     df_values = df.reset_index()
     df_values.index = df_values.index * steps_per_period
     new_index = range(df_values.index[-1] + 1)
+
+    # added lines
+    df_values = df_values[~df_values.index.duplicated()]
+
     df_values = df_values.reindex(new_index)
+
     if interpolate_period:
         if df_values.iloc[:, 0].dtype.kind == 'M':
             first, last = df_values.iloc[[0, -1], 0]
@@ -129,11 +136,9 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0
         df_ranks = df_ranks.interpolate()
 
     df_values = df_values.interpolate()
-
+    df_values = filter_threshold(df_values, threshold)
     if compute_ranks:
         return df_values, df_ranks
-
-    df_values = filter_threshold(df_values, threshold)
     return df_values
 
 
@@ -218,6 +223,7 @@ def prepare_long_data(df, index, columns, values, aggfunc='sum', orientation='h'
     '''
     df_wide = df.pivot_table(index=index, columns=columns, values=values,
                              aggfunc=aggfunc).fillna(method='ffill')
+
     return prepare_wide_data(df_wide, orientation, sort, n_bars, interpolate_period,
                              steps_per_period, compute_ranks)
 
