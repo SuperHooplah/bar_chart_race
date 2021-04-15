@@ -117,7 +117,10 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate
 
     df_values = df_values.interpolate()
     if compute_ranks:
+        df_values = df_values[np.isfinite(df_values).all(1)]
         return df_values, df_ranks
+
+    df_values = df_values[np.isfinite(df_values).all(1)]
     return df_values
 
 
