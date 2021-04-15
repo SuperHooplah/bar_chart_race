@@ -138,7 +138,10 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0
     df_values = df_values.interpolate()
     df_values = filter_threshold(df_values, threshold)
     if compute_ranks:
+        df_values = df_values[np.isfinite(df_values).all(1)]
         return df_values, df_ranks
+
+    df_values = df_values[np.isfinite(df_values).all(1)]
     return df_values
 
 
