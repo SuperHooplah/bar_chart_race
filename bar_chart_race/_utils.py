@@ -4,11 +4,10 @@ import pandas as pd
 from matplotlib import image as mimage
 
 
-def load_dataset(name='covid19'):
+def load_dataset(name='covid19', threshold=0):
     '''
     Return a pandas DataFrame suitable for immediate use in `bar_chart_race`.
     Must be connected to the internet
-
     Parameters
     ----------
     name : str, default 'covid19'
@@ -18,7 +17,8 @@ def load_dataset(name='covid19'):
         * 'covid19_tutorial'
         * 'urban_pop'
         * 'baseball'
-
+    threshold : int, default 0
+        Lowest value that will be shown on the bar_chart_race
     Returns
     -------
     pandas DataFrame
@@ -32,78 +32,65 @@ def load_dataset(name='covid19'):
     index_col = index_dict[name]
     parse_dates = [index_col] if index_col else None
     df = pd.read_csv(url, index_col=index_col, parse_dates=parse_dates)
-    df.fillna(0, inplace=True)
-    return df
+    new_df = filter_threshold(df, threshold)
+
+    return new_df
 
 
-def filter_threshold(df, threshold):
-    return df[df.iloc[:, -1:] > threshold]
+def filter_threshold(df, thresh):
+    return df.loc[(df.hr > thresh)]
 
 
-def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0, interpolate_period=False,
+def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate_period=False,
                       steps_per_period=10, compute_ranks=True):
     '''
-    Prepares 'wide' data for bar chart animation. 
+    Prepares 'wide' data for bar chart animation.
     Returns two DataFrames - the interpolated values and the interpolated ranks
-    
-    There is no need to use this function directly to create the animation. 
+
+    There is no need to use this function directly to create the animation.
     You can pass your DataFrame directly to `bar_chart_race`.
-
-    This function is useful if you want to view the prepared data without 
+    This function is useful if you want to view the prepared data without
     creating an animation.
-
     Parameters
     ----------
     df : pandas DataFrame
-        Must be a 'wide' pandas DataFrame where each row represents a 
-        single period of time. 
-        Each column contains the values of the bars for that category. 
+        Must be a 'wide' pandas DataFrame where each row represents a
+        single period of time.
+        Each column contains the values of the bars for that category.
         Optionally, use the index to label each time period.
-
     orientation : 'h' or 'v', default 'h'
         Bar orientation - horizontal or vertical
-
     sort : 'desc' or 'asc', default 'desc'
-        Choose how to sort the bars. Use 'desc' to put largest bars on 
+        Choose how to sort the bars. Use 'desc' to put largest bars on
         top and 'asc' to place largest bars on bottom.
-
     n_bars : int, default None
         Choose the maximum number of bars to display on the graph.
-        By default, use all bars. New bars entering the race will 
+        By default, use all bars. New bars entering the race will
         appear from the bottom or top.
-
-    threshold : int, default 0
-        Choose the minimum value to display on the graph
-
     interpolate_period : bool, default `False`
         Whether to interpolate the period. Only valid for datetime or
-        numeric indexes. When set to `True`, for example, 
-        the two consecutive periods 2020-03-29 and 2020-03-30 with 
+        numeric indexes. When set to `True`, for example,
+        the two consecutive periods 2020-03-29 and 2020-03-30 with
         `steps_per_period` set to 4 would yield a new index of
         2020-03-29 00:00:00
         2020-03-29 06:00:00
         2020-03-29 12:00:00
         2020-03-29 18:00:00
         2020-03-30 00:00:00
-
     steps_per_period : int, default 10
-        The number of steps to go from one time period to the next. 
+        The number of steps to go from one time period to the next.
         The bars will grow linearly between each period.
-
     compute_ranks : bool, default True
         When `True` return both the interpolated values and ranks DataFrames
         Otherwise just return the values
-
     Returns
     -------
     A tuple of DataFrames. The first is the interpolated values and the second
     is the interpolated ranks.
-
     Examples
     --------
     df_values, df_ranks = bcr.prepare_wide_data(df)
     '''
-
     if n_bars is None:
         n_bars = df.shape[1]
 
@@ -129,11 +116,8 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, threshold=0
         df_ranks = df_ranks.interpolate()
 
     df_values = df_values.interpolate()
-
     if compute_ranks:
         return df_values, df_ranks
-
-    df_values = filter_threshold(df_values, threshold)
     return df_values
 
 
@@ -141,76 +125,63 @@ def prepare_long_data(df, index, columns, values, aggfunc='sum', orientation='h'
                       sort='desc', n_bars=None, interpolate_period=False,
                       steps_per_period=10, compute_ranks=True):
     '''
-    Prepares 'long' data for bar chart animation. 
+    Prepares 'long' data for bar chart animation.
     Returns two DataFrames - the interpolated values and the interpolated ranks
-    
+
     You (currently) cannot pass long data to `bar_chart_race` directly. Use this function
     to create your wide data first before passing it to `bar_chart_race`.
-
     Parameters
     ----------
     df : pandas DataFrame
-        Must be a 'long' pandas DataFrame where one column contains 
-        the period, another the categories, and the third the values 
-        of each category for each period. 
-        
-        This DataFrame will be passed to the `pivot_table` method to turn 
-        it into a wide DataFrame. It will then be passed to the 
-        `prepare_wide_data` function.
+        Must be a 'long' pandas DataFrame where one column contains
+        the period, another the categories, and the third the values
+        of each category for each period.
 
+        This DataFrame will be passed to the `pivot_table` method to turn
+        it into a wide DataFrame. It will then be passed to the
+        `prepare_wide_data` function.
     index : str
         Name of column used for the time period. It will be placed in the index
-
     columns : str
         Name of column containing the categories for each time period. This column
         will get pivoted so that each unique value is a column.
-
     values : str
         Name of column holding the values for each time period of each category.
         This column will become the values of the resulting DataFrame
-
     aggfunc : str or aggregation function, default 'sum'
-        String name of aggregation function ('sum', 'min', 'mean', 'max, etc...) 
-        or actual function (np.sum, np.min, etc...). 
-        Categories that have multiple values for the same time period must be 
+        String name of aggregation function ('sum', 'min', 'mean', 'max, etc...)
+        or actual function (np.sum, np.min, etc...).
+        Categories that have multiple values for the same time period must be
         aggregated for the animation to work.
-
     orientation : 'h' or 'v', default 'h'
         Bar orientation - horizontal or vertical
-
     sort : 'desc' or 'asc', default 'desc'
-        Choose how to sort the bars. Use 'desc' to put largest bars on 
+        Choose how to sort the bars. Use 'desc' to put largest bars on
         top and 'asc' to place largest bars on bottom.
-
     n_bars : int, default None
         Choose the maximum number of bars to display on the graph.
-        By default, use all bars. New bars entering the race will 
+        By default, use all bars. New bars entering the race will
         appear from the bottom or top.
-
     interpolate_period : bool, default `False`
         Whether to interpolate the period. Only valid for datetime or
-        numeric indexes. When set to `True`, for example, 
-        the two consecutive periods 2020-03-29 and 2020-03-30 with 
+        numeric indexes. When set to `True`, for example,
+        the two consecutive periods 2020-03-29 and 2020-03-30 with
         `steps_per_period` set to 4 would yield a new index of
         2020-03-29 00:00:00
         2020-03-29 06:00:00
         2020-03-29 12:00:00
         2020-03-29 18:00:00
         2020-03-30 00:00:00
-
     steps_per_period : int, default 10
-        The number of steps to go from one time period to the next. 
+        The number of steps to go from one time period to the next.
         The bars will grow linearly between each period.
-
     compute_ranks : bool, default True
         When `True` return both the interpolated values and ranks DataFrames
         Otherwise just return the values
-
     Returns
     -------
     A tuple of DataFrames. The first is the interpolated values and the second
     is the interpolated ranks.
-
     Examples
     --------
     df_values, df_ranks = bcr.prepare_long_data(df)

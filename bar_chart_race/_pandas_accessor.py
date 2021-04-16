@@ -44,9 +44,9 @@ class _BCR:
                     title, line_label_font, tick_label_font, tick_template, shared_fontdict, 
                     scale, fig, writer, line_kwargs, fig_kwargs)
 
-    def prepare_wide_data(self, orientation='h', sort='desc', n_bars=None, threshold=0, interpolate_period=False,
+    def prepare_wide_data(self, orientation='h', sort='desc', n_bars=None, interpolate_period=False,
                           steps_per_period=10, compute_ranks=True):
-        return pwd(self._df, orientation, sort, n_bars, threshold, interpolate_period,
+        return pwd(self._df, orientation, sort, n_bars, interpolate_period,
                    steps_per_period, compute_ranks)
 
     def prepare_long_data(self, index, columns, values, aggfunc='sum', orientation='h', 

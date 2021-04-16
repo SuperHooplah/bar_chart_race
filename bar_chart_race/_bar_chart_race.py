@@ -157,7 +157,7 @@ class _BarChartRace(CommonChart):
 
         compute_ranks = self.fixed_order is False
         dfs = prepare_wide_data(df, self.orientation, self.sort, self.n_bars,
-                                self.interpolate_period, self.steps_per_period, compute_ranks, self.threshold)
+                                self.interpolate_period, self.steps_per_period, compute_ranks)
         if isinstance(dfs, tuple):
             df_values, df_ranks = dfs
         else:
