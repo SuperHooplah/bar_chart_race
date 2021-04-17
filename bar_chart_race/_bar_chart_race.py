@@ -511,7 +511,7 @@ class _BarChartRace(CommonChart):
         return ret_val
 
 
-def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
+def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
                    fixed_order=False, fixed_max=False, steps_per_period=10,
                    period_length=500, end_period_pause=0, interpolate_period=False,
                    period_label=True, period_template=None, period_summary_func=None,
@@ -560,6 +560,7 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
         from the edge of the axes.
 
     threshold : int, default 0
+        Choose the minimum value to be displayed on the graph
 
     fixed_order : bool or list, default False
         When `False`, bar order changes every time period to correspond 
@@ -872,10 +873,10 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
     These sizes are relative to plt.rcParams['font.size'].
     '''
 
-    bcr = _BarChartRace(df, filename, orientation, sort, n_bars,
-                        fixed_order, fixed_max, steps_per_period, period_length,
-                        end_period_pause, interpolate_period, period_label, period_template, period_summary_func,
-                        perpendicular_bar_func, colors, title, bar_size, bar_textposition,
-                        bar_texttemplate, bar_label_font, tick_label_font, tick_template, shared_fontdict,
-                        scale, fig, writer, bar_kwargs, fig_kwargs, filter_column_colors)
+    bcr = _BarChartRace(df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
+                        steps_per_period, period_length, end_period_pause, interpolate_period,
+                        period_label, period_template, period_summary_func, perpendicular_bar_func,
+                        colors, title, bar_size, bar_textposition, bar_texttemplate,
+                        bar_label_font, tick_label_font, tick_template, shared_fontdict, scale,
+                        fig, writer, bar_kwargs, fig_kwargs, filter_column_colors)
     return bcr.make_animation()
