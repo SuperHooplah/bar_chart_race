@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import ticker
-from ._func_animation import FuncAnimation
+from _func_animation import FuncAnimation
 from matplotlib.colors import Colormap
 
-from ._common_chart import CommonChart
-from ._utils import prepare_wide_data
+from _common_chart import CommonChart
+from _utils import prepare_wide_data
 
 
 class _BarChartRace(CommonChart):
