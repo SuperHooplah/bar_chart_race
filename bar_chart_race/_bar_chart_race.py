@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import ticker
-from ._func_animation import FuncAnimation
+from _func_animation import FuncAnimation
 from matplotlib.colors import Colormap
 
-from ._common_chart import CommonChart
-from ._utils import prepare_wide_data
+from _common_chart import CommonChart
+from _utils import prepare_wide_data
 
 
 class _BarChartRace(CommonChart):
@@ -511,7 +511,7 @@ class _BarChartRace(CommonChart):
         return ret_val
 
 
-def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
+def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
                    fixed_order=False, fixed_max=False, steps_per_period=10,
                    period_length=500, end_period_pause=0, interpolate_period=False,
                    period_label=True, period_template=None, period_summary_func=None,

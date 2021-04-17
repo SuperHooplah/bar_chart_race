@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly
 
-from ._utils import prepare_wide_data
+from _utils import prepare_wide_data
 
 
 class _BarChartRace:
@@ -432,7 +432,7 @@ class _BarChartRace:
             return fig
 
 
-def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
+def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bars=None,
                           fixed_order=False, fixed_max=False, steps_per_period=10, 
                           period_length=500, end_period_pause=0, interpolate_period=False, 
                           period_label=True, period_template=None, period_summary_func=None, 
@@ -756,7 +756,7 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
         write_html_kwargs=None,
         filter_column_colors=False)        
     '''
-    bcr = _BarChartRace(df, filename, orientation, sort, n_bars, threshold, fixed_order, fixed_max,
+    bcr = _BarChartRace(df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
                         steps_per_period, period_length, end_period_pause, interpolate_period, 
                         period_label, period_template, period_summary_func, perpendicular_bar_func, 
                         colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font, 

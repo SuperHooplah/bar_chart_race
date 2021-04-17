@@ -13,7 +13,7 @@ class _BCR:
     def __init__(self, df):
         self._df = df
 
-    def bar_chart_race(self, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
+    def bar_chart_race(self, filename=None, orientation='h', sort='desc', n_bars=None,
                        fixed_order=False, fixed_max=False, steps_per_period=10,
                        period_length=500, end_period_pause=0, interpolate_period=False,
                        period_label=True, period_template=None, period_summary_func=None,
@@ -22,7 +22,7 @@ class _BCR:
                        bar_label_font=None, tick_label_font=None, tick_template='{x:,.0f}',
                        shared_fontdict=None, scale='linear', fig=None, writer=None,
                        bar_kwargs=None, fig_kwargs=None, filter_column_colors=False):
-        return bcr(self._df, filename, orientation, sort, n_bars, threshold, fixed_order, fixed_max,
+        return bcr(self._df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
                    steps_per_period, period_length, end_period_pause, interpolate_period,
                    period_label, period_template, period_summary_func, perpendicular_bar_func,
                    colors, title, bar_size, bar_textposition, bar_texttemplate,
@@ -63,10 +63,10 @@ _BCR.prepare_long_data.__doc__ = re.sub('df : .*(?=filename :)', '', pld.__doc__
 import importlib
 
 if importlib.util.find_spec('plotly'):
-    from ._bar_chart_race_plotly import bar_chart_race_plotly as bcrp
+    from _bar_chart_race_plotly import bar_chart_race_plotly as bcrp
 
 
-    def bar_chart_race_plotly(self, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
+    def bar_chart_race_plotly(self, filename=None, orientation='h', sort='desc', n_bars=None,
                               fixed_order=False, fixed_max=False, steps_per_period=10,
                               period_length=500, end_period_pause=0, interpolate_period=False,
                               period_label=True, period_template=None, period_summary_func=None,
@@ -75,8 +75,7 @@ if importlib.util.find_spec('plotly'):
                               tick_label_font=None, hovertemplate=None, slider=True, scale='linear',
                               bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None,
                               filter_column_colors=False):
-
-        return bcrp(self._df, filename, orientation, sort, n_bars, threshold, fixed_order, fixed_max,
+        return bcrp(self._df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
                     steps_per_period, period_length, end_period_pause, interpolate_period,
                     period_label, period_template, period_summary_func, perpendicular_bar_func,
                     colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
