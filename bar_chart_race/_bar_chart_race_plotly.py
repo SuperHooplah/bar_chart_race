@@ -7,7 +7,7 @@ import plotly
 
 from _utils import prepare_wide_data
 
-
+#Just a comment
 class _BarChartRace:
     
     def __init__(self, df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
