@@ -3,7 +3,7 @@ from io import BytesIO, TextIOWrapper
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from matplotlib import rcParams
+from matplotlib import rcParams, _log
 from matplotlib import animation
 
 
