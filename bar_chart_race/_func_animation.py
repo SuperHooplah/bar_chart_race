@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 from matplotlib import rcParams
 from matplotlib import animation
 
+
 class FuncAnimation(animation.FuncAnimation):
 
     def to_html5_video(self, embed_limit=None, savefig_kwargs=None):
@@ -32,6 +33,8 @@ class FuncAnimation(animation.FuncAnimation):
             h264 video.
             If the *embed_limit* is exceeded, this returns the string
             "Video too large to embed."
+            :param embed_limit:
+            :param savefig_kwargs:
         """
         VIDEO_TAG = r'''<video {size} {options}>
   <source type="video/mp4" src="data:video/mp4;base64,{video}">
@@ -70,7 +73,7 @@ class FuncAnimation(animation.FuncAnimation):
             else:
                 self._base64_video = vid64.decode('ascii')
                 self._video_size = 'width="{}" height="{}"'.format(
-                        *writer.frame_size)
+                    *writer.frame_size)
 
         # If we exceeded the size, this attribute won't exist
         if hasattr(self, '_base64_video'):
