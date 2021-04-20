@@ -36,6 +36,12 @@ def load_dataset(name='covid19'):
     return df
 
 
+def load_custom_data(filename, index_col, parse_dates):
+    df = pd.read_csv(filename, index_col=index_col, parse_dates=parse_dates)
+    df.fillna(0, inplace=True)
+    return df
+
+
 def filter_threshold(df, threshold):
     return df[df.iloc[:, -1:] > threshold]
 
