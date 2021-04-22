@@ -9,12 +9,12 @@ from ._utils import prepare_wide_data
 
 
 class _BarChartRace:
-    
+
     def __init__(self, df, filename, orientation, sort, n_bars, threshold, fixed_order, fixed_max,
-                 steps_per_period, period_length, end_period_pause, interpolate_period, 
-                 period_label, period_template, period_summary_func, perpendicular_bar_func, 
-                 colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font, 
-                 tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs, 
+                 steps_per_period, period_length, end_period_pause, interpolate_period,
+                 period_label, period_template, period_summary_func, perpendicular_bar_func,
+                 colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
+                 tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs,
                  write_html_kwargs, filter_column_colors):
         self.filename = filename
         self.extension = self.get_extension()
@@ -44,7 +44,7 @@ class _BarChartRace:
         self.duration = self.period_length / steps_per_period
         self.write_html_kwargs = write_html_kwargs or {}
         self.filter_column_colors = filter_column_colors
-        
+
         self.validate_params()
         self.bar_kwargs = self.get_bar_kwargs(bar_kwargs)
         self.layout_kwargs = self.get_layout_kwargs(layout_kwargs)
@@ -69,7 +69,7 @@ class _BarChartRace:
                 raise ValueError('`filename` must have an extension')
         elif self.filename is not None:
             raise TypeError('`filename` must be None or a string')
-            
+
         if self.sort not in ('asc', 'desc'):
             raise ValueError('`sort` must be "asc" or "desc"')
 
@@ -151,7 +151,7 @@ class _BarChartRace:
                 return '%{y} - %{x:,.0f}<extra></extra>'
             return '%{x} - %{y:,.0f}<extra></extra>'
         return hovertemplate
-            
+
     def prepare_data(self, df):
         if self.fixed_order is True:
             last_values = df.iloc[-1].sort_values(ascending=False)
@@ -161,7 +161,7 @@ class _BarChartRace:
             cols = self.fixed_order
             df = df[cols]
             self.n_bars = min(len(cols), self.n_bars)
-            
+
         compute_ranks = self.fixed_order is False
         dfs = prepare_wide_data(df, orientation=self.orientation, sort=self.sort,
                                 n_bars=self.n_bars, interpolate_period=self.interpolate_period,
@@ -176,9 +176,9 @@ class _BarChartRace:
             m = df_values.shape[0]
             rank_row = np.arange(1, n)
             if (self.sort == 'desc' and self.orientation == 'h') or \
-                (self.sort == 'asc' and self.orientation == 'v'):
+                    (self.sort == 'asc' and self.orientation == 'v'):
                 rank_row = rank_row[::-1]
-            
+
             ranks_arr = np.repeat(rank_row.reshape(1, -1), m, axis=0)
             df_ranks = pd.DataFrame(data=ranks_arr, columns=cols)
 
@@ -199,13 +199,13 @@ class _BarChartRace:
                 self.df_values = self.df_values.loc[:, col_filt]
                 self.df_ranks = self.df_ranks.loc[:, col_filt]
         return col_filt
-        
+
     def get_bar_colors(self, colors):
         if colors is None:
             colors = 'dark12'
             if self.df_values.shape[1] > 10:
                 colors = 'dark24'
-            
+
         if isinstance(colors, str):
             from ._colormaps import colormaps
             try:
@@ -231,11 +231,11 @@ class _BarChartRace:
         bar_colors = np.array(bar_colors[:self.df_values.shape[1]])
 
         # plotly uses 0, 255 rgb colors, matplotlib is 0 to 1
-        if bar_colors.dtype.kind == 'f' and bar_colors.shape[1] == 3 and  (bar_colors <= 1).all():
+        if bar_colors.dtype.kind == 'f' and bar_colors.shape[1] == 3 and (bar_colors <= 1).all():
             bar_colors = pd.DataFrame(bar_colors).astype('str')
-            bar_colors = bar_colors.apply(lambda x: ','.join(x), axis = 1)
+            bar_colors = bar_colors.apply(lambda x: ','.join(x), axis=1)
             bar_colors = ('rgb(' + bar_colors + ')').values
-        
+
         if not self.filter_column_colors:
             if not self.col_filt.all():
                 col_idx = np.where(self.col_filt)[0] % n
@@ -244,7 +244,7 @@ class _BarChartRace:
                 exp_ct = np.bincount(np.arange(num_cols) % n, minlength=n)
                 if (col_idx_ct > exp_ct).any():
                     warnings.warn("Some of your columns never make an appearance in the animation. "
-                                    "To reduce color repetition, set `filter_column_colors` to `True`")
+                                  "To reduce color repetition, set `filter_column_colors` to `True`")
         return bar_colors
 
     def set_fixed_max_limits(self):
@@ -260,7 +260,7 @@ class _BarChartRace:
         else:
             self.xlimit = label_limit
             self.ylimit = value_limit
-        
+
     def set_value_limit(self, bar_vals):
         min_val = 1 if self.scale == 'log' else 0
         if not self.fixed_max:
@@ -270,7 +270,7 @@ class _BarChartRace:
                 self.xlimit = value_limit
             else:
                 self.ylimit = value_limit
-  
+
     def get_frames(self):
         frames = []
         slider_steps = []
@@ -281,46 +281,46 @@ class _BarChartRace:
             bar_vals[bar_locs == 0] = 0
             bar_vals[bar_locs == self.n_bars + 1] = 0
             # self.set_value_limit(bar_vals) # plotly bug? not updating range
-            
+
             cols = self.df_values.columns.values.copy()
             cols[bar_locs == 0] = ' '
             colors = self.bar_colors
-            bar_locs = bar_locs + np.random.rand(len(bar_locs)) / 10_000 # done to prevent stacking of bars
+            bar_locs = bar_locs + np.random.rand(len(bar_locs)) / 10_000  # done to prevent stacking of bars
             x, y = (bar_vals, bar_locs) if self.orientation == 'h' else (bar_locs, bar_vals)
 
-            label_axis = dict(tickmode='array', tickvals=bar_locs, ticktext=cols, 
+            label_axis = dict(tickmode='array', tickvals=bar_locs, ticktext=cols,
                               tickfont=self.tick_label_font)
 
             label_axis['range'] = self.ylimit if self.orientation == 'h' else self.xlimit
             if self.orientation == 'v':
                 label_axis['tickangle'] = -90
 
-            value_axis = dict(showgrid=True, type=self.scale)#, tickformat=',.0f')
+            value_axis = dict(showgrid=True, type=self.scale)  # , tickformat=',.0f')
             value_axis['range'] = self.xlimit if self.orientation == 'h' else self.ylimit
 
             bar = go.Bar(x=x, y=y, width=self.bar_size, textposition=self.bar_textposition,
-                         texttemplate=self.bar_texttemplate, orientation=self.orientation, 
-                         marker_color=colors, insidetextfont=self.bar_label_font, 
-                         cliponaxis=False, outsidetextfont=self.bar_label_font, 
+                         texttemplate=self.bar_texttemplate, orientation=self.orientation,
+                         marker_color=colors, insidetextfont=self.bar_label_font,
+                         cliponaxis=False, outsidetextfont=self.bar_label_font,
                          hovertemplate=self.hovertemplate, **self.bar_kwargs)
 
             data = [bar]
             xaxis, yaxis = (value_axis, label_axis) if self.orientation == 'h' \
-                             else (label_axis, value_axis)
+                else (label_axis, value_axis)
 
             annotations = self.get_annotations(i)
             if self.slider and i % self.steps_per_period == 0:
                 slider_steps.append(
-                            {"args": [[i],
-                                {"frame": {"duration": self.duration, "redraw": False},
-                                 "mode": "immediate",
-                                 "fromcurrent": True,
-                                 "transition": {"duration": self.duration}
-                                }],
-                            "label": self.get_period_label_text(i), 
-                            "method": "animate"})
-            layout = go.Layout(xaxis=xaxis, yaxis=yaxis, annotations=annotations, 
-                                margin={'l': 150}, **self.layout_kwargs)
+                    {"args": [[i],
+                              {"frame": {"duration": self.duration, "redraw": False},
+                               "mode": "immediate",
+                               "fromcurrent": True,
+                               "transition": {"duration": self.duration}
+                               }],
+                     "label": self.get_period_label_text(i),
+                     "method": "animate"})
+            layout = go.Layout(xaxis=xaxis, yaxis=yaxis, annotations=annotations,
+                               margin={'l': 150}, **self.layout_kwargs)
             if self.perpendicular_bar_func:
                 pbar = self.get_perpendicular_bar(bar_vals, i, layout)
                 layout.update(shapes=[pbar], overwrite=True)
@@ -338,7 +338,7 @@ class _BarChartRace:
         else:
             s = self.str_index[i]
         return s
-    
+
     def get_annotations(self, i):
         annotations = []
         if self.period_label:
@@ -352,9 +352,9 @@ class _BarChartRace:
             if 'x' not in text_dict or 'y' not in text_dict or 'text' not in text_dict:
                 name = self.period_summary_func.__name__
                 raise ValueError(f'The dictionary returned from `{name}` must contain '
-                                  '"x", "y", and "s"')
+                                 '"x", "y", and "s"')
             text, x, y = text_dict['text'], text_dict['x'], text_dict['y']
-            annotations.append(dict(text=text, x=x, y=y, font=dict(size=14), 
+            annotations.append(dict(text=text, x=x, y=y, font=dict(size=14),
                                     xref="paper", yref="paper", showarrow=False))
 
         return annotations
@@ -378,7 +378,7 @@ class _BarChartRace:
         y0, y1 = (val - delta, val + delta) if self.orientation == 'v' else (0, 1)
 
         return dict(type="rect", xref=xref, yref=yref, x0=x0, y0=y0, x1=x1, y1=y1,
-                    fillcolor="#444444",layer="below", opacity=.5, line_width=0)
+                    fillcolor="#444444", layer="below", opacity=.5, line_width=0)
 
     def make_animation(self):
         frames, slider_steps = self.get_frames()
@@ -387,8 +387,8 @@ class _BarChartRace:
         layout.title = self.title
         layout.updatemenus = [dict(
             type="buttons",
-            direction = "left",
-            x=1, 
+            direction="left",
+            x=1,
             y=1.02,
             xanchor='right',
             yanchor='bottom',
@@ -396,33 +396,33 @@ class _BarChartRace:
                           method="animate",
                           # redraw must be true for bar plots
                           args=[None, {"frame": {"duration": self.duration, "redraw": True},
-                                        "fromcurrent": True
-                                    }]),
+                                       "fromcurrent": True
+                                       }]),
                      dict(label="Pause",
                           method="animate",
                           args=[[None], {"frame": {"duration": 0, "redraw": False},
                                          "mode": "immediate",
                                          "transition": {"duration": 0}}]),
                      ]
-                     )]
+        )]
 
         sliders_dict = {
-                        "active": 0,
-                        "yanchor": "top",
-                        "xanchor": "left",
-                        "currentvalue": {
-                            # "font": {"size": 20},
-                            # "prefix": '', # allow user to set
-                            "visible": False, # just repeats period label
-                            # "xanchor": "right"
-                        },
-                        "transition": {"duration": self.duration, "easing": "cubic-in-out"},
-                        "pad": {"b": 10, "t": 50},
-                        "len": 0.88,
-                        "x": 0.05,
-                        "y": 0,
-                        "steps": slider_steps
-                    }
+            "active": 0,
+            "yanchor": "top",
+            "xanchor": "left",
+            "currentvalue": {
+                # "font": {"size": 20},
+                # "prefix": '', # allow user to set
+                "visible": False,  # just repeats period label
+                # "xanchor": "right"
+            },
+            "transition": {"duration": self.duration, "easing": "cubic-in-out"},
+            "pad": {"b": 10, "t": 50},
+            "len": 0.88,
+            "x": 0.05,
+            "y": 0,
+            "steps": slider_steps
+        }
         if self.slider:
             layout.sliders = [sliders_dict]
 
@@ -433,14 +433,14 @@ class _BarChartRace:
             return fig
 
 
-def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bars=None, 
-                          fixed_order=False, fixed_max=False, steps_per_period=10, 
-                          period_length=500, end_period_pause=0, interpolate_period=False, 
-                          period_label=True, period_template=None, period_summary_func=None, 
-                          perpendicular_bar_func=None, colors=None, title=None, bar_size=.95, 
-                          bar_textposition='outside', bar_texttemplate=None, bar_label_font=None, 
-                          tick_label_font=None, hovertemplate=None, slider=True, scale='linear', 
-                          bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None, 
+def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bars=None,
+                          fixed_order=False, fixed_max=False, steps_per_period=10,
+                          period_length=500, end_period_pause=0, interpolate_period=False,
+                          period_label=True, period_template=None, period_summary_func=None,
+                          perpendicular_bar_func=None, colors=None, title=None, bar_size=.95,
+                          bar_textposition='outside', bar_texttemplate=None, bar_label_font=None,
+                          tick_label_font=None, hovertemplate=None, slider=True, scale='linear',
+                          bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None,
                           filter_column_colors=False):
     '''
     Create an animated bar chart race using Plotly. Data must be in 
@@ -756,9 +756,9 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
         filter_column_colors=False)        
     '''
     bcr = _BarChartRace(df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
-                        steps_per_period, period_length, end_period_pause, interpolate_period, 
-                        period_label, period_template, period_summary_func, perpendicular_bar_func, 
-                        colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font, 
-                        tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs, 
+                        steps_per_period, period_length, end_period_pause, interpolate_period,
+                        period_label, period_template, period_summary_func, perpendicular_bar_func,
+                        colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
+                        tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs,
                         write_html_kwargs, filter_column_colors)
     return bcr.make_animation()
