@@ -194,10 +194,12 @@ class _BarChartRace(CommonChart):
 
     def get_bar_colors(self, colors):
         if colors is None:
-            colors = 'modified_colors'
+            colors = 'green'
             if self.df_values.shape[1] > 10:
-                colors = 'modified_colors'
-
+                colors = 'green'
+        #over 650 is red
+        #650-550 is orange
+        # threshold - 550 is green
         if isinstance(colors, str):
             from ._colormaps import colormaps
 
@@ -222,7 +224,9 @@ class _BarChartRace(CommonChart):
         n = len(bar_colors)
         orig_bar_colors = bar_colors
         if self.df_values.shape[1] > n:
+            # creates a list of colors with the same length as # of values
             bar_colors = bar_colors * (self.df_values.shape[1] // n + 1)
+        # array of lists that goes from 0-length of values
         bar_colors = np.array(bar_colors[:self.df_values.shape[1]])
 
         if not self.filter_column_colors:
@@ -483,6 +487,11 @@ class _BarChartRace(CommonChart):
             return frames
 
         frames = frame_generator(len(self.df_values))
+        """
+        for frame in frames:
+            if self.df_values>=200:
+                get_bar_colors("red")
+        """
         anim = FuncAnimation(self.fig, self.anim_func, frames, init_func, interval=interval)
 
         try:
