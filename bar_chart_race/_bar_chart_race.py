@@ -194,9 +194,9 @@ class _BarChartRace(CommonChart):
 
     def get_bar_colors(self, colors):
         if colors is None:
-            colors = 'dark12'
+            colors = 'red'
             if self.df_values.shape[1] > 10:
-                colors = 'dark24'
+                colors = 'red'
 
         if isinstance(colors, str):
             from ._colormaps import colormaps
