@@ -1074,7 +1074,7 @@ colormaps = \
         "#fcf9bb",
         "#fcfbbd",
         "#fcfdbf"
-    ],"modified_colors": ["#ff0000", "#ffa500","#00ff00"],
+    ],"modified_colors": ["#ff0000", "#ffa500","#00ff00"], "green":["green"], "red":["red"],
     "plasma": [
         "#0d0887",
         "#100788",
