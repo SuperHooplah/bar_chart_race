@@ -512,13 +512,14 @@ class _BarChartRace(CommonChart):
         return ret_val
 
 
+# '{x:.0f}',
 def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
                    fixed_order=False, fixed_max=False, steps_per_period=10,
                    period_length=500, end_period_pause=0, interpolate_period=False,
                    period_label=True, period_template=None, period_summary_func=None,
                    perpendicular_bar_func=None, colors=None, title=None, bar_size=.95,
-                   bar_textposition='outside', bar_texttemplate='{x:,.0f}',
-                   bar_label_font=None, tick_label_font=None, tick_template='{x:,.0f}',
+                   bar_textposition='inside', bar_texttemplate='{x:.0f}',
+                   bar_label_font=None, tick_label_font=None, tick_template=None,
                    shared_fontdict=None, scale='linear', fig=None, writer=None,
                    bar_kwargs=None, fig_kwargs=None, filter_column_colors=True):
     '''

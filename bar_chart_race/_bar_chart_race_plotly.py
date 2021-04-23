@@ -60,7 +60,7 @@ class _BarChartRace:
 
     def get_bar_texttemplate(self, bar_texttemplate):
         if bar_texttemplate is None:
-            bar_texttemplate = '%{x:,.0f}' if self.orientation == 'h' else '%{y:,.0f}'
+            bar_texttemplate = '%{x:,.000f}' if self.orientation == 'h' else '%{y:,.000f}'
         return bar_texttemplate
 
     def validate_params(self):
@@ -438,7 +438,7 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
                           period_length=500, end_period_pause=0, interpolate_period=False,
                           period_label=True, period_template=None, period_summary_func=None,
                           perpendicular_bar_func=None, colors=None, title=None, bar_size=.95,
-                          bar_textposition='outside', bar_texttemplate=None, bar_label_font=None,
+                          bar_textposition='outside', bar_texttemplate="{x:,.0f}", bar_label_font=None,
                           tick_label_font=None, hovertemplate=None, slider=True, scale='linear',
                           bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None,
                           filter_column_colors=False):
@@ -563,7 +563,7 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
             'Period {x:10.2f}'
 
         Date directives will only be used for datetime indexes.
-
+#Checking this first
     period_summary_func : function, default None
         Custom text added to the axes each period.
         Create a user-defined function that accepts two pandas Series of the 
@@ -624,6 +624,7 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
         Use one of the strings - 'inside', 'outside', 'auto', 'none'
         or a sequence of the above
 
+#Checking this second
     bar_texttemplate : str, default '%{x:,.0f}' or '%{y:,.0f}'
         Template string used for rendering the text inside/outside
         the bars. Variables are inserted using %{variable},
