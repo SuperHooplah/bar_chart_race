@@ -54,7 +54,7 @@ class _BarChartRace(CommonChart):
         self.html = self.filename is None
         self.df_values, self.df_ranks = self.prepare_data(df)
         self.col_filt = self.get_col_filt()
-        self.bar_colors = self.get_bar_colors(colors)
+        self.bar_colors = self.get_bar_colors()
         self.str_index = self.df_values.index.astype('str')
         self.fig_kwargs = self.get_fig_kwargs(fig_kwargs)
         self.subplots_adjust = self.get_subplots_adjust()
@@ -192,17 +192,21 @@ class _BarChartRace(CommonChart):
                 self.df_ranks = self.df_ranks.loc[:, col_filt]
         return col_filt
 
-    def get_bar_colors(self, colors):
-        if colors is None:
-            colors = 'green'
-            if self.df_values.shape[1] > 10:
+    def set_bar_color(self):
+        values = self.df_values.values
+        for i in range(0, len(values)):
+            if values[i].all() >= 650:
+                colors = 'red'
+            elif 650 > values[i].all() >= 550:
+                colors = 'orange'
+            else:
                 colors = 'green'
-        #over 650 is red
-        #650-550 is orange
-        # threshold - 550 is green
+            return colors
+
+    def get_bar_colors(self):
+        colors = self.set_bar_color()
         if isinstance(colors, str):
             from ._colormaps import colormaps
-
             try:
                 bar_colors = colormaps[colors.lower()]
             except KeyError:
@@ -485,13 +489,10 @@ class _BarChartRace(CommonChart):
                     for _ in range(pause):
                         frames.append(None)
             return frames
-
         frames = frame_generator(len(self.df_values))
-        """
-        for frame in frames:
-            if self.df_values>=200:
-                get_bar_colors("red")
-        """
+        for frame in range(len(frames)):
+            self.get_bar_colors()
+
         anim = FuncAnimation(self.fig, self.anim_func, frames, init_func, interval=interval)
 
         try:
