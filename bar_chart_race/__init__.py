@@ -8,9 +8,9 @@ from . import _pandas_accessor
 
 __version__ = '0.2.0'
 __all__ = [
-    'bar_chart_race', 
+    'bar_chart_race',
     'bar_chart_race_plotly',
-    'load_dataset', 
-    'prepare_wide_data', 
+    'load_dataset',
+    'prepare_wide_data',
     'prepare_long_data',
     'line_chart_race']
