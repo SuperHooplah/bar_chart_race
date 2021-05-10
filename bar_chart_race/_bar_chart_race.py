@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import ticker
 from ._func_animation import FuncAnimation
 from matplotlib.colors import Colormap
+from csv import reader
 
 from ._common_chart import CommonChart
 from ._utils import prepare_wide_data
@@ -49,7 +50,6 @@ class _BarChartRace(CommonChart):
         self.filter_column_colors = filter_column_colors
         self.extra_pixels = 0
         self.validate_params()
-
         self.bar_kwargs = self.get_bar_kwargs(bar_kwargs)
         self.html = self.filename is None
         self.df_values, self.df_ranks = self.prepare_data(df)
@@ -192,17 +192,29 @@ class _BarChartRace(CommonChart):
                 self.df_ranks = self.df_ranks.loc[:, col_filt]
         return col_filt
 
-    def get_bar_colors(self, colors):
-        if colors is None:
-            colors = 'green'
-            if self.df_values.shape[1] > 10:
-                colors = 'green'
-        #over 650 is red
-        #650-550 is orange
-        # threshold - 550 is green
+    def set_bar_color(self):
+        colors_list = []
+        with open('C:/Users/Owner/bar_chart_race/data/baseball.csv', 'r') as read_obj:
+            csv_reader = reader(read_obj)
+            header = next(csv_reader)
+            if header is not None:
+                for row_values in csv_reader:
+                    homerun_num = int(row_values[-1])
+                    if homerun_num <= 549:
+                        colors = 'green'
+                    elif 649 <= homerun_num >= 550:
+                        colors = 'orange'
+                    else:
+                        if homerun_num >= 650:
+                            colors = 'red'
+                    colors_list.append(colors)
+                    return colors_list
+
+
+    def get_bar_colors(self):
+        colors = self.set_bar_color()
         if isinstance(colors, str):
             from ._colormaps import colormaps
-
             try:
                 bar_colors = colormaps[colors.lower()]
             except KeyError:
@@ -432,7 +444,7 @@ class _BarChartRace(CommonChart):
                     text = self.bar_texttemplate.format(x=val)
 
                 xtext, ytext = ax.transLimits.inverted().transform((xtext, ytext))
-                
+
                 text_obj = ax.text(xtext, ytext, text, clip_on=True, **self.bar_label_font)
                 text_objs.append(text_obj)
             return text_objs
@@ -485,13 +497,8 @@ class _BarChartRace(CommonChart):
                     for _ in range(pause):
                         frames.append(None)
             return frames
-
         frames = frame_generator(len(self.df_values))
-        """
-        for frame in frames:
-            if self.df_values>=200:
-                get_bar_colors("red")
-        """
+
         anim = FuncAnimation(self.fig, self.anim_func, frames, init_func, interval=interval)
 
         try:
@@ -521,7 +528,6 @@ class _BarChartRace(CommonChart):
         return ret_val
 
 
-# '{x:.0f}',
 def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None, threshold=0,
                    fixed_order=False, fixed_max=False, steps_per_period=10,
                    period_length=500, end_period_pause=0, interpolate_period=False,

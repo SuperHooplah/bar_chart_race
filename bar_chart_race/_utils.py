@@ -32,10 +32,11 @@ def load_dataset(name='covid19', threshold=0):
     index_col = index_dict[name]
     parse_dates = [index_col] if index_col else None
     df = pd.read_csv(url, index_col=index_col, parse_dates=parse_dates)
-    #new_df = filter_threshold(df, threshold)
+    # new_df = filter_threshold(df, threshold)
 
-    #return new_df
+    # return new_df
     return df
+
 
 def filter_threshold(df, thresh):
     return df.loc[(df.hr > thresh)]
@@ -117,10 +118,8 @@ def prepare_wide_data(df, orientation='h', sort='desc', n_bars=None, interpolate
 
     df_values = df_values.interpolate()
     if compute_ranks:
-        # df_values = df_values[np.isfinite(df_values).all(1)]
         return df_values, df_ranks
 
-    # df_values = df_values[np.isfinite(df_values).all(1)]
     return df_values
 
 
