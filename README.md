@@ -114,4 +114,4 @@ df_baseball.bcr.bar_chart_race(
                    title='Top 10 Home Run Hitters by Season Played')
 ```
 
-![img](https://github.com/dexplo/bar_chart_race/raw/gh-pages/images/baseball_horiz.gif)
+![img](https://github.com/dexplo/bar_chart_race/blob/gh-pages/images/social_share_small.gif)
