@@ -327,6 +327,7 @@ class _BarChartRace:
                 layout.update(shapes=[pbar], overwrite=True)
             frames.append(go.Frame(data=data, layout=layout, name=i))
 
+
         return frames, slider_steps
 
     def get_period_label_text(self, i):
