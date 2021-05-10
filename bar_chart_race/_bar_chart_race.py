@@ -432,7 +432,7 @@ class _BarChartRace(CommonChart):
                     text = self.bar_texttemplate.format(x=val)
 
                 xtext, ytext = ax.transLimits.inverted().transform((xtext, ytext))
-
+                
                 text_obj = ax.text(xtext, ytext, text, clip_on=True, **self.bar_label_font)
                 text_objs.append(text_obj)
             return text_objs
@@ -886,4 +886,5 @@ def bar_chart_race(df, filename=None, orientation='h', sort='desc', n_bars=None,
                         colors, title, bar_size, bar_textposition, bar_texttemplate,
                         bar_label_font, tick_label_font, tick_template, shared_fontdict, scale,
                         fig, writer, bar_kwargs, fig_kwargs, filter_column_colors)
+
     return bcr.make_animation()

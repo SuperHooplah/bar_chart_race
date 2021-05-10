@@ -59,8 +59,9 @@ class _BarChartRace:
             return self.filename.split('.')[-1]
 
     def get_bar_texttemplate(self, bar_texttemplate):
-        if bar_texttemplate is None:
-            bar_texttemplate = '%{x:,.000f}' if self.orientation == 'h' else '%{y:,.000f}'
+        #if bar_texttemplate is None:
+        #    bar_texttemplate = '%{x:,.000f}' if self.orientation == 'h' else '%{y:,.000f}'
+        bar_texttemplate = '{x:.5Ef}'
         return bar_texttemplate
 
     def validate_params(self):
@@ -381,6 +382,7 @@ class _BarChartRace:
                     fillcolor="#444444", layer="below", opacity=.5, line_width=0)
 
     def make_animation(self):
+
         frames, slider_steps = self.get_frames()
         data = frames[0].data
         layout = frames[0].layout
@@ -762,4 +764,6 @@ def bar_chart_race_plotly(df, filename=None, orientation='h', sort='desc', n_bar
                         colors, title, bar_size, bar_textposition, bar_texttemplate, bar_label_font,
                         tick_label_font, hovertemplate, slider, scale, bar_kwargs, layout_kwargs,
                         write_html_kwargs, filter_column_colors)
+
+
     return bcr.make_animation()

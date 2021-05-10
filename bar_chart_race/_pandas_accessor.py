@@ -75,6 +75,7 @@ if importlib.util.find_spec('plotly'):
                               tick_label_font=None, hovertemplate=None, slider=True, scale='linear',
                               bar_kwargs=None, layout_kwargs=None, write_html_kwargs=None,
                               filter_column_colors=False):
+
         return bcrp(self._df, filename, orientation, sort, n_bars, fixed_order, fixed_max,
                     steps_per_period, period_length, end_period_pause, interpolate_period,
                     period_label, period_template, period_summary_func, perpendicular_bar_func,

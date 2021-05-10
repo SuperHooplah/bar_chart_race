@@ -32,10 +32,10 @@ def load_dataset(name='covid19', threshold=0):
     index_col = index_dict[name]
     parse_dates = [index_col] if index_col else None
     df = pd.read_csv(url, index_col=index_col, parse_dates=parse_dates)
-    new_df = filter_threshold(df, threshold)
+    #new_df = filter_threshold(df, threshold)
 
-    return new_df
-
+    #return new_df
+    return df
 
 def filter_threshold(df, thresh):
     return df.loc[(df.hr > thresh)]
